@@ -46,8 +46,10 @@
   }).addTo(m);
 
 		var shpfile = new L.Shapefile('data/clearing_permits.zip', {
+			filter: function(feature, layer) {   
+            return (feature.properties.PERMITPOLY >10 );
+        },
 			onEachFeature: function(feature, layer) {
-				console.log(feature.properties["PERMITPOLY"])
 				if (feature.properties) {
 					layer.bindPopup(Object.keys(feature.properties).map(function(k) {
 						if(k === "PERMITPOLY") return k + ": " + feature.properties[k] + "<br />";
@@ -57,6 +59,8 @@
 					});
 				}
 			}
+			
+
 		});
 		shpfile.addTo(m);
 		shpfile.once("data:loaded", function() {
