@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset='utf-8' />
+	<title>
+		Preview
+	</title>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+	<!--[if lte IE 8]>
+			<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+		<![endif]-->
+	<style>
+		html {
+			height: 100%
+		}
+
+		body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		#map {
+			height: 100%
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="map"></div>
+	<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+	<script src="catiline.js"></script>
+	<script src="leaflet.shpfile.js"></script>
+
+
+	<script>
+		var m = L.map('map').setView([-14.8, 133.3], 6);
+		 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' +
+      '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    id: 'mapbox.streets'
+  }).addTo(m);
+
+		var shpfile = new L.Shapefile('data/clearing_permits.zip', {
+			onEachFeature: function(feature, layer) {
+				console.log(feature.properties["PERMITPOLY"])
+				if (feature.properties) {
+					layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+						if(k === "PERMITPOLY") return k + ": " + feature.properties[k] + "<br />";
+						else return
+					}).join(""), {
+						maxHeight: 200
+					});
+				}
+			}
+		});
+		shpfile.addTo(m);
+		shpfile.once("data:loaded", function() {
+			console.log("finished loaded shapefile");
+		});
+	</script>
+</body>
+
+</html>
